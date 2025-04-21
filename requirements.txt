@@ -2,5 +2,7 @@ fastapi
 uvicorn[standard]
 python-multipart
 opencv-python
-streamlit
+streamlit==1.40.0
 requests
+pillow
+streamlit-drawable-canvas

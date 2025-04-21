@@ -9,7 +9,7 @@ from streamlit_drawable_canvas import st_canvas
 
 st.title("Streamlit → FastAPI Feature Tracking Video Processor")
 
-# First file uploader
+# 1. File uploader
 uploaded = st.file_uploader("Upload MP4", type="mp4", key="main_uploader")
 if not uploaded:
     st.info("Please upload an MP4 to begin.")

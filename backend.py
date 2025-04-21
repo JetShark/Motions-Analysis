@@ -99,7 +99,7 @@ async def process_video_endpoint(
     def iterfile():
         with open(out_path, mode="rb") as f:
             yield from f
-        # cleanup
+        # Cleanup
         os.unlink(in_tmp.name)
         os.unlink(out_path)
 
@@ -107,7 +107,7 @@ async def process_video_endpoint(
 
 @app.post("/thumbnail/")
 async def thumbnail_endpoint(file: UploadFile = File(...)):
-    # save upload to temp MP4
+    # Save upload to temp MP4
     in_tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".mp4")
     in_tmp.write(await file.read())
     in_tmp.flush()

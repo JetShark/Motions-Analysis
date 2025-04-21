@@ -9,8 +9,8 @@ from streamlit_drawable_canvas import st_canvas
 
 st.title("Streamlit → FastAPI Feature Tracking Video Processor")
 
-# 1. Upload video
-uploaded = st.file_uploader("Upload MP4", type="mp4")
+# First file uploader
+uploaded = st.file_uploader("Upload MP4", type="mp4", key="main_uploader")
 if not uploaded:
     st.info("Please upload an MP4 to begin.")
     st.stop()
@@ -24,7 +24,7 @@ if thumb_resp.status_code != 200:
     st.error("Failed to load thumbnail from backend.")
     st.stop()
 
-# load PIL image
+# Load PIL image
 frame = Image.open(BytesIO(thumb_resp.content))
 
 # Convert PIL image to base64-encoded data URI
@@ -56,12 +56,24 @@ if canvas_result.json_data and canvas_result.json_data["objects"]:
     w, h = obj["width"], obj["height"]
     st.write(f"Selected bbox: x={x:.1f}, y={y:.1f}, w={w:.1f}, h={h:.1f}")
 
+    # Validate bounding box
+    if x < 0 or y < 0 or x + w > frame.width or y + h > frame.height:
+        st.error("Bounding box is out of frame bounds.")
+        st.stop()
+
     start = st.slider("Start time (s)", 0.0, 60.0, 0.0, 0.5)
-    end   = st.slider("End time (s)",   0.0, 60.0, 10.0, 0.5)
-    skip  = st.number_input("Process every Nth frame", min_value=1, max_value=30, value=5)
+    end = st.slider("End time (s)", 0.0, 60.0, 10.0, 0.5)
+    skip = st.number_input("Process every Nth frame", min_value=1, max_value=30, value=5)
+
+    # Second file uploader
+    boundup = st.file_uploader("Upload MP4", type="mp4", key="bounding_box_uploader")
+    if not boundup:
+        st.info("Please upload an MP4 to begin.")
+        st.stop()
 
     if st.button("Track & Analyze Motion"):
-        files = {"file": ("input.mp4", uploaded, "video/mp4")}
+        # Reupload the video to the backend
+        files = {"file": ("input.mp4", boundup, "video/mp4")}
         data = {
             "start_time": start,
             "end_time": end,

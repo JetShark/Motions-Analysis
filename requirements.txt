@@ -6,3 +6,4 @@ streamlit==1.40.0
 requests
 pillow
 streamlit-drawable-canvas
+opencv-contrib-python
